@@ -2,7 +2,7 @@
 set -e
 
 echo "==> Installing backend dependencies..."
-npm ci
+npm install --no-audit --no-fund
 
 echo "==> Building TypeScript..."
 npm run build
