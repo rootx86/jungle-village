@@ -174,9 +174,18 @@ export function dishSprite(): Cvs {
 }
 export function flagSprite(): Cvs {
   const c = mk(20, 30), g = ctx(c);
-  rect(g, 3, 2, 1, 28, '#e8e8e8'); rect(g, 4, 3, 14, 9, '#f4f4f4');
-  for (let i = 0; i < 9; i += 2) rect(g, 4, 3 + i, 14, 1, '#d8342c');
-  rect(g, 4, 3, 6, 5, '#2a3f78'); for (let i = 0; i < 3; i++) rect(g, 5 + i * 2, 4 + (i % 2) * 2, 1, 1, '#ffffff');
+  // pole
+  rect(g, 3, 2, 1, 28, '#e8e8e8');
+  // Indian flag: saffron / white / green stripes
+  rect(g, 4, 3, 14, 3, '#FF9933');
+  rect(g, 4, 6, 14, 3, '#FFFFFF');
+  rect(g, 4, 9, 14, 3, '#138808');
+  // Ashoka Chakra — navy circle in centre of white stripe
+  g.fillStyle = '#000080';
+  g.beginPath(); g.arc(11, 7.5, 1.5, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#FFFFFF';
+  g.beginPath(); g.arc(11, 7.5, 0.6, 0, Math.PI * 2); g.fill();
+  // shadow at base of pole
   rect(g, 1, 29, 6, 1, 'rgba(0,0,0,0.4)');
   return c;
 }
