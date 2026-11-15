@@ -6,3 +6,4 @@ node_modules
 dist
 .next-export
 out
+*.tsbuildinfo
