@@ -37,7 +37,17 @@ app.use((_req, res, next) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'same-site');
   next();
 });
-app.use(cors({ origin: config.corsOrigin.split(','), methods: ['GET', 'POST', 'DELETE'], maxAge: 600 }));
+const allowedOrigins = config.corsOrigin.split(',').map(o => o.trim());
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true); // server-to-server / curl
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    if (origin.endsWith('.railway.app') || origin.endsWith('.up.railway.app')) return cb(null, true);
+    cb(new Error('CORS: origin not allowed'));
+  },
+  methods: ['GET', 'POST', 'DELETE'],
+  maxAge: 600,
+}));
 app.use(express.json({ limit: '10kb' }));
 
 // tiny in-memory rate limiter (per IP); put a real WAF / CDN in front for serious traffic
