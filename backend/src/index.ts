@@ -43,6 +43,7 @@ app.use(cors({
     if (!origin) return cb(null, true); // server-to-server / curl
     if (allowedOrigins.includes(origin)) return cb(null, true);
     if (origin.endsWith('.railway.app') || origin.endsWith('.up.railway.app')) return cb(null, true);
+    if (origin === 'https://www.oldschoolstories.com' || origin === 'https://oldschoolstories.com') return cb(null, true);
     cb(new Error('CORS: origin not allowed'));
   },
   methods: ['GET', 'POST', 'DELETE'],
