@@ -1,8 +1,3 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const here = path.dirname(fileURLToPath(import.meta.url));
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false, // R3F + imperative canvas/textures: avoid double-mount noise in dev
@@ -12,8 +7,6 @@ const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || '.next',
   images: { unoptimized: true },
   trailingSlash: false,
-  outputFileTracingRoot: path.join(here, '..'), // the world generator is shared with ../backend/src/shared.ts
-  experimental: { externalDir: true },
   ...(process.env.NEXT_OUTPUT === 'export' ? {} : { async headers() {
     return [{
       source: '/:path*',
