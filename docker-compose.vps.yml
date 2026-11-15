@@ -1,0 +1,68 @@
+# Production on one small VPS (Hetzner CX22 or similar): Postgres + API + Caddy (automatic HTTPS) for the API only.
+# The website itself is static files on Cloudflare Pages, see DEPLOY.md.
+#   docker compose -f docker-compose.vps.yml up -d --build
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    command: ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=40", "-c", "log_min_duration_statement=500"]
+    environment:
+      POSTGRES_USER: jungle
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run deploy/make-env.sh}
+      POSTGRES_DB: jungle
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jungle -d jungle"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    # no published ports: only the API container can reach the database
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      BACKEND_PORT: "3001"
+      DATABASE_URL: postgres://jungle:${POSTGRES_PASSWORD}@db:5432/jungle
+      CORS_ORIGIN: ${CORS_ORIGIN:?comma-separated list of the website origins, e.g. https://village.pages.dev}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?run deploy/make-env.sh}
+      CHANNEL_NAME: ${CHANNEL_NAME:-My Channel}
+      SEED_DEMO: "false"
+      YT_MODE: ${YT_MODE:-apikey}
+      YT_API_KEY: ${YT_API_KEY:-}
+      YT_CHANNEL_ID: ${YT_CHANNEL_ID:-}
+      YT_POLL_INTERVAL_SEC: ${YT_POLL_INTERVAL_SEC:-300}
+      YT_BACKFILL_LIMIT: ${YT_BACKFILL_LIMIT:-0}
+      YT_OAUTH_CLIENT_ID: ${YT_OAUTH_CLIENT_ID:-}
+      YT_OAUTH_CLIENT_SECRET: ${YT_OAUTH_CLIENT_SECRET:-}
+      YT_OAUTH_REFRESH_TOKEN: ${YT_OAUTH_REFRESH_TOKEN:-}
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 512m
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on: [backend]
+    ports:
+      - "${CADDY_HTTP_PORT:-80}:80"
+      - "${CADDY_HTTPS_PORT:-443}:443"
+    environment:
+      API_DOMAIN: ${API_DOMAIN:?e.g. api.example.com (a DNS record pointing at this server)}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

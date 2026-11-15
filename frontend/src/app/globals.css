@@ -1,0 +1,64 @@
+:root { color-scheme: dark; --ink: #e9f3df; --panel: rgba(8, 20, 14, 0.78); --accent: #f3b94d; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #08140d; color: var(--ink);
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif; }
+#stage { position: fixed; inset: 0; touch-action: none; }
+#stage canvas { display: block; cursor: grab; }
+.vignette { position: fixed; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(2,10,6,0.55) 100%); }
+#hud { position: fixed; top: 16px; left: 16px; padding: 12px 16px; background: var(--panel); border: 2px solid #2a4a33;
+  border-radius: 10px; pointer-events: none; backdrop-filter: blur(3px); }
+#hud h1 { margin: 0; font-size: 18px; letter-spacing: 1px; color: var(--accent); }
+#count { margin-top: 2px; font-size: 14px; }
+#legend { list-style: none; margin: 8px 0 0; padding: 0; font-size: 12px; opacity: 0.85; }
+#legend li { margin: 2px 0; }
+#toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); padding: 10px 18px; background: var(--panel);
+  border: 2px solid var(--accent); border-radius: 999px; opacity: 0; transition: all .35s; pointer-events: none; font-size: 15px; }
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+#popup { position: fixed; z-index: 5; min-width: 190px; padding: 12px 14px; background: #10261a; border: 2px solid var(--accent);
+  border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.5); transform: translate(-50%, calc(-100% - 14px)); pointer-events: none; }
+#popup::after { content: ""; position: absolute; left: 50%; bottom: -9px; width: 14px; height: 14px; background: #10261a;
+  border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: translateX(-50%) rotate(45deg); }
+.p-name { font-weight: 700; font-size: 17px; color: var(--accent); }
+.p-date { margin-top: 4px; font-size: 13px; }
+.p-tier { margin-top: 2px; font-size: 12px; opacity: .75; }
+#admin { position: fixed; top: 16px; right: 16px; display: flex; gap: 6px; align-items: center; padding: 8px 10px;
+  background: var(--panel); border: 2px solid #5a3a3a; border-radius: 10px; font-size: 13px; }
+#admin button { background: #2a4a33; color: var(--ink); border: 1px solid #4c7a58; border-radius: 6px; padding: 4px 9px; cursor: pointer; }
+#admin button:hover { background: #3a6a47; }
+#loading { position: fixed; inset: 0; display: grid; place-items: center; background: #08140d; font-size: 18px; transition: opacity .6s; }
+#loading.done { opacity: 0; pointer-events: none; }
+
+.p-job { margin-top: 6px; font-size: 13px; font-weight: 600; }
+.p-job span { font-weight: 400; opacity: .75; }
+#jobs { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 8px; max-width: 210px; font-size: 12px; opacity: .9; }
+
+.where { margin-top: 2px; font-size: 13px; opacity: .85; }
+.note { margin: 8px 0 0; font-size: 12px; opacity: .8; max-width: 200px; line-height: 1.35; }
+.hint { margin: 6px 0 0; font-size: 11px; opacity: .6; max-width: 200px; }
+.travel { pointer-events: auto; margin-top: 10px; width: 100%; padding: 8px 10px; background: #f3b94d; color: #1a1408; border: 0; border-radius: 8px; font: 700 14px inherit; cursor: pointer; }
+.travel:hover { background: #ffd070; }
+#hud { pointer-events: none; }
+#banner { position: fixed; top: 22%; left: 50%; transform: translateX(-50%); padding: 10px 22px; background: rgba(8,16,28,.82); border: 2px solid #f3b94d; border-radius: 999px; font-size: 20px; letter-spacing: 1px; pointer-events: none; }
+#fade { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; transition: opacity .6s; z-index: 20; }
+#fade.on { opacity: 1; }
+.vignette.moon { background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(2,2,10,0.7) 100%); }
+.earth-sky { position: fixed; right: 26px; top: 26px; width: 74px; height: 74px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 34% 30%, #bfe3ff 0, #3a86d8 38%, #1a4a98 72%, #0c2358 100%); box-shadow: 0 0 22px 4px rgba(90,160,255,.45); }
+.earth-sky::before { content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(ellipse 30% 22% at 38% 42%, #4faa5a 0, rgba(79,170,90,0) 100%), radial-gradient(ellipse 22% 28% at 66% 62%, #4faa5a 0, rgba(79,170,90,0) 100%); }
+
+#transit { position: fixed; inset: 0; background: #04050f; z-index: 8; }
+#transit canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+.t-label { position: absolute; left: 0; right: 0; bottom: 8%; text-align: center; font: 700 18px "Trebuchet MS", system-ui, sans-serif; letter-spacing: 3px; text-transform: uppercase; color: #cfe4ff; text-shadow: 0 0 10px #4a7ad8; }
+.vignette.off { display: none; }
+.travel:disabled { opacity: .5; cursor: default; }
+#stage canvas { filter: saturate(1.22) contrast(1.07); }
+
+#zoombar { position: fixed; right: 16px; bottom: 24px; display: flex; flex-direction: column; gap: 6px; z-index: 6; }
+#zoombar button { width: 40px; height: 40px; border-radius: 10px; border: 2px solid #2a4a33; background: var(--panel); color: var(--ink); font: 700 20px/1 system-ui, sans-serif; cursor: pointer; backdrop-filter: blur(3px); }
+#zoombar button:hover { background: #2a4a33; }
+
+.travel.ghost { background: transparent; color: var(--ink); border: 2px solid #4c7a58; margin-top: 8px; }
+.travel.ghost:hover { background: #2a4a33; }
+#globe-home { position: fixed; z-index: 4; transform: translate(-50%, -150%); padding: 3px 9px; background: rgba(10,20,14,.82); border: 1px solid #f3b94d; border-radius: 999px; font-size: 12px; pointer-events: none; white-space: nowrap; }

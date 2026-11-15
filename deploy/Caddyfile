@@ -1,0 +1,14 @@
+# Automatic HTTPS (Let's Encrypt) for the API domain. flush_interval -1 keeps the live event stream unbuffered.
+{$API_DOMAIN} {
+	encode zstd gzip
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000"
+	}
+	reverse_proxy backend:3001 {
+		flush_interval -1
+		transport http {
+			read_timeout 1h
+		}
+	}
+}
