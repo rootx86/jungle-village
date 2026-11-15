@@ -2,7 +2,7 @@
 set -e
 
 echo "==> Installing frontend dependencies..."
-npm install --no-audit --no-fund
+npm install 
 
 echo "==> Building Next.js app..."
 npm run build
