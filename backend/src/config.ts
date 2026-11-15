@@ -12,7 +12,7 @@ const isProd = env.NODE_ENV === 'production';
 
 export const config = {
   isProd,
-  port: num(env.BACKEND_PORT, 3001),
+  port: num(env.BACKEND_PORT ?? env.PORT, 3001),
   databaseUrl: env.DATABASE_URL ?? 'postgres://jungle:jungle@localhost:5433/jungle',
   corsOrigin: env.CORS_ORIGIN ?? 'http://localhost:3000',
   adminToken: env.ADMIN_TOKEN ?? '',
